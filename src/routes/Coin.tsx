@@ -157,19 +157,6 @@ function Coin() {
   const { state } = useLocation() as IRouteState;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
-  //   useEffect(() => {
-  //     (async () => {
-  //       const infoData = await await (
-  //         await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //       ).json();
-  //       const priceData = await (
-  //         await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //       ).json();
-  //       setInfo(infoData);
-  //       setPriceInfo(priceData);
-  //       setLoading(false);
-  //     })();
-  //   }, [coinId]);
   const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(["info", coinId], () =>
     fetchCoinInfo(coinId)
   );
@@ -222,7 +209,7 @@ function Coin() {
           </Tabs>
           <Routes>
             <Route path="price" element={<Price />} />
-            <Route path="chart" element={<Chart />} />
+            <Route path="chart" element={<Chart coinId={coinId} />} />
           </Routes>
         </>
       )}

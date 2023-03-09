@@ -62,17 +62,6 @@ interface ICoin {
 }
 
 function Coins() {
-  //   const [coins, setCoins] = useState<ICoin[]>([]);
-  //   const [loading, setLoading] = useState(true);
-  //   useEffect(() => {
-  //     (async () => {
-  //       const response = await fetch("https://api.coinpaprika.com/v1/coins");
-  //       const json = await response.json();
-  //       setCoins(json.slice(0, 100));
-  //       setLoading(false);
-  //     })();
-  //   }, []);
-  // 전부 다 React Query로 대체 가능
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
   return (
     <Container>
