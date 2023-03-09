@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { Link, Route, Routes, useLocation, useMatch, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import Price from "./Price";
 import Chart from "./Chart";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { useQuery } from "@tanstack/react-query";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -78,15 +79,15 @@ const Tab = styled.span<{ isActive: boolean }>`
   background-color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
   color: ${(props) => props.theme.bgColor};
-  padding: 7px 0px;
-  border-radius: 10px;
+  padding: 10px 0px;
+  border-radius: 15px;
   a {
     display: block;
   }
 `;
-interface IRouteParams {
+type IRouteParams = {
   coinId: string;
-}
+};
 
 interface IRouteState {
   state: {
@@ -152,30 +153,35 @@ interface IPriceData {
 
 function Coin() {
   // useParams() URL에서 관심있는 정보를 잡아낼 수 있게 해줌
-  const [loading, setLoading] = useState(true);
-  const { coinId } = useParams();
+  const { coinId } = useParams() as IRouteParams;
   const { state } = useLocation() as IRouteState;
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
-  useEffect(() => {
-    (async () => {
-      const infoData = await await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
+  //   useEffect(() => {
+  //     (async () => {
+  //       const infoData = await await (
+  //         await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+  //       ).json();
+  //       const priceData = await (
+  //         await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+  //       ).json();
+  //       setInfo(infoData);
+  //       setPriceInfo(priceData);
+  //       setLoading(false);
+  //     })();
+  //   }, [coinId]);
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(["info", coinId], () =>
+    fetchCoinInfo(coinId)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<IPriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId)
+  );
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
-        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -184,26 +190,26 @@ function Coin() {
           <InfoWrapper>
             <Info>
               <span>RANK</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </Info>
             <Info>
               <span>SYMBOL</span>
-              <span>{info?.symbol}</span>
+              <span>{infoData?.symbol}</span>
             </Info>
             <Info>
               <span>PRICE NOW</span>
-              <span>${priceInfo ? Math.round(priceInfo.quotes.USD.price) : "Loading..."}</span>
+              <span>${tickersData ? Math.round(tickersData.quotes.USD.price) : "Loading..."}</span>
             </Info>
           </InfoWrapper>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <InfoWrapper>
             <Info>
               <span>TOTAL SUPPLY</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </Info>
             <Info>
               <span>MAX SUPPLY</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </Info>
           </InfoWrapper>
           <Tabs>
