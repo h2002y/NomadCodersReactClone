@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { useLocation, useParams } from "react-router-dom";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Price from "./Price";
+import Chart from "./Chart";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -18,13 +20,47 @@ const Header = styled.header`
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
-  font-size: 48px;
+  font-size: 56px;
 `;
 
 const Loader = styled.span`
   text-align: center;
   font-size: 48px;
   display: block;
+`;
+
+const InfoWrapper = styled.div`
+  border-radius: 20px;
+  margin: 20px 0px;
+  padding: 10px;
+  background-color: ${(props) => props.theme.textColor};
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span {
+    padding: 5px;
+    color: ${(props) => props.theme.bgColor};
+  }
+
+  span:nth-child(2) {
+    font-size: 28px;
+  }
+`;
+
+const Description = styled.div`
+  margin: 20px 0px;
+  padding: 20px 5px;
+  color: ${(props) => props.theme.textColor};
+  font-size: 18px;
+  font-weight: lighter;
+  line-height: 1.5;
 `;
 
 interface IRouteParams {
@@ -112,13 +148,47 @@ function Coin() {
       setPriceInfo(priceData);
       setLoading(false);
     })();
-  }, []);
+  }, [coinId]);
   return (
     <Container>
       <Header>
-        <Title>{state?.name || "Loading..."}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
       </Header>
-      {loading ? <Loader>Loading...</Loader> : null}
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <InfoWrapper>
+            <Info>
+              <span>RANK</span>
+              <span>{info?.rank}</span>
+            </Info>
+            <Info>
+              <span>SYMBOL</span>
+              <span>{info?.symbol}</span>
+            </Info>
+            <Info>
+              <span>PRICE NOW</span>
+              <span>${priceInfo ? Math.round(priceInfo.quotes.USD.price) : "Loading..."}</span>
+            </Info>
+          </InfoWrapper>
+          <Description>{info?.description}</Description>
+          <InfoWrapper>
+            <Info>
+              <span>TOTAL SUPPLY</span>
+              <span>{priceInfo?.total_supply}</span>
+            </Info>
+            <Info>
+              <span>MAX SUPPLY</span>
+              <span>{priceInfo?.max_supply}</span>
+            </Info>
+          </InfoWrapper>
+          <Routes>
+            <Route path="price" element={<Price />} />
+            <Route path="chart" element={<Chart />} />
+          </Routes>
+        </>
+      )}
     </Container>
   );
 }
