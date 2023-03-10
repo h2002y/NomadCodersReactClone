@@ -79,7 +79,7 @@ function Coins() {
           {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
               <Link
-                to={`/NomadCodersReactClone/${coin.id}/`}
+                to={`/${coin.id}`}
                 state={{ name: coin.name, symbol: coin.symbol.toLowerCase() }}
               >
                 <Img
