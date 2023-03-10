@@ -5,6 +5,8 @@ import Chart from "./Chart";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHouse} from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -66,6 +68,19 @@ const Description = styled.div`
   line-height: 1.5;
 `;
 
+const Home = styled.div`
+  margin-left: 50px;
+  margin-top: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: ${(props) => props.theme.accentColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.bgColor};
+`;
+
 const Tabs = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -94,6 +109,7 @@ interface IRouteState {
   state: {
     name: string;
     symbol: string;
+    priceData: IPriceData;
   };
 }
 
@@ -183,6 +199,11 @@ function Coin() {
       </Helmet>
       <Header>
         <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
+        <Link to="/">
+          <Home>
+            <FontAwesomeIcon icon={faHouse} />
+          </Home>
+        </Link>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -220,13 +241,13 @@ function Coin() {
               </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`} state={{ symbol: state.symbol }}>
+              <Link to={`/${coinId}/price`} state={{ symbol: state.symbol, priceData: tickersData }}>
                 Price
               </Link>
             </Tab>
           </Tabs>
           <Routes>
-            <Route path="price" element={<Price />} />
+            <Route path="price" element={<Price coinId={coinId} />} />
             <Route path="chart" element={<Chart coinId={coinId} />} />
           </Routes>
         </>

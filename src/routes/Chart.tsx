@@ -33,7 +33,10 @@ type Candle = {
 function Chart({ coinId }: ChartProps) {
   const { state } = useLocation() as IRouteState;
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-    fetchCoinHistory(coinId)
+    fetchCoinHistory(coinId),
+    {
+      refetchInterval: 10000,
+    }
   );
   return (
     <div>

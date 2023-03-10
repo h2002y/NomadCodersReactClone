@@ -9,7 +9,7 @@ export const darkTheme: DefaultTheme = {
 
 export const lightTheme: DefaultTheme = {
   id: "light",
-  bgColor: "#FFFFFF",
-  textColor: "#93BFE4",
-  accentColor: "#2F363C",
+  bgColor: "#E6E7E5",
+  textColor: "#9CB4CC",
+  accentColor: "#95A792",
 };
