@@ -1,6 +1,9 @@
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
-
+import { ThemeProvider } from "styled-components";
+import { darkTheme, lightTheme } from "./theme";
+import { useDarkMode } from "./useDarkMode";
+import Toggle from "./Toggle";
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
@@ -62,11 +65,19 @@ a{
 `;
 
 function App() {
+  const [theme, toggleTheme, componentMounted] = useDarkMode();
+  const themeMode = theme === "light" ? lightTheme : darkTheme;
+  if (!componentMounted) {
+    return <></>;
+  }
   return (
-    <>
-      <GlobalStyle />
-      <Router />
-    </>
+    <ThemeProvider theme={themeMode}>
+      <>
+        <GlobalStyle />
+        <Toggle theme={theme} toggleTheme={toggleTheme} />
+        <Router />
+      </>
+    </ThemeProvider>
   );
 }
 

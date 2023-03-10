@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api";
+import { Helmet } from "react-helmet";
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
@@ -17,7 +18,7 @@ const Header = styled.header`
 `;
 const CoinsList = styled.ul``;
 const Coin = styled.li`
-  background-color: white;
+  background-color: ${(props) => props.theme.accentColor};
   color: ${(props) => props.theme.bgColor};
   margin: 10px;
   border-radius: 15px;
@@ -29,7 +30,7 @@ const Coin = styled.li`
   }
   &:hover {
     a {
-      color: ${(props) => props.theme.accentColor};
+      color: ${(props) => props.theme.textColor};
     }
   }
 `;
@@ -65,6 +66,9 @@ function Coins() {
   const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
   return (
     <Container>
+      <Helmet>
+        <title>Coins</title>
+      </Helmet>
       <Header>
         <Title>코인</Title>
       </Header>
@@ -74,7 +78,10 @@ function Coins() {
         <CoinsList>
           {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`} state={{ name: coin.name }}>
+              <Link
+                to={`/${coin.id}`}
+                state={{ name: coin.name, symbol: coin.symbol.toLowerCase() }}
+              >
                 <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                 />

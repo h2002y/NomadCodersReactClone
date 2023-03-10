@@ -4,6 +4,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -61,7 +62,7 @@ const Description = styled.div`
   padding: 20px 5px;
   color: ${(props) => props.theme.textColor};
   font-size: 18px;
-  font-weight: lighter;
+  font-weight: 600;
   line-height: 1.5;
 `;
 
@@ -92,6 +93,7 @@ type IRouteParams = {
 interface IRouteState {
   state: {
     name: string;
+    symbol: string;
   };
 }
 
@@ -162,11 +164,23 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<IPriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 10000,
+    }
   );
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>{coinId}</title>
+        <link
+          rel="icon"
+          type="image/png"
+          href={`https://coinicons-api.vercel.app/api/icon/${state.symbol}`}
+          sizes="16x16"
+        ></link>
+      </Helmet>
       <Header>
         <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
@@ -201,10 +215,14 @@ function Coin() {
           </InfoWrapper>
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link to={`/${coinId}/chart`} state={{ symbol: state.symbol }}>
+                Chart
+              </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`}>Price</Link>
+              <Link to={`/${coinId}/price`} state={{ symbol: state.symbol }}>
+                Price
+              </Link>
             </Tab>
           </Tabs>
           <Routes>
