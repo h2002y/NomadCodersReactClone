@@ -199,7 +199,7 @@ function Coin() {
       </Helmet>
       <Header>
         <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
-        <Link to="/">
+        <Link to="/NomadCodersReactClone/">
           <Home>
             <FontAwesomeIcon icon={faHouse} />
           </Home>
@@ -236,12 +236,12 @@ function Coin() {
           </InfoWrapper>
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`} state={{ symbol: state.symbol }}>
+              <Link to={`/NomadCodersReactClone/${coinId}/chart`} state={{ symbol: state.symbol }}>
                 Chart
               </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`} state={{ symbol: state.symbol, priceData: tickersData }}>
+              <Link to={`/NomadCodersReactClone/${coinId}/price`} state={{ symbol: state.symbol, priceData: tickersData }}>
                 Price
               </Link>
             </Tab>
