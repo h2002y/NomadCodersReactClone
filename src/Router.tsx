@@ -6,8 +6,8 @@ function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={`${process.env.PUBLIC_URL}/:coinId/*`} element={<Coin />} />
-        <Route path={`${process.env.PUBLIC_URL}/}`} element={<Coins />} />
+        <Route path="NomadCodersReactClone/:coinId/*" element={<Coin />} />
+        <Route path="NomadCodersReactClone/" element={<Coins />} />
       </Routes>
     </BrowserRouter>
   );
